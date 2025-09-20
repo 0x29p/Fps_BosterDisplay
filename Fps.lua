@@ -1,5 +1,4 @@
--- 🔥 Roblox FPS Booster + Display (Universal) 🔥
-
+-- 🔥 Roblox FPS Booster + Display (Universal) 🔥  
 local RunService = game:GetService("RunService")
 local Stats = game:GetService("Stats")
 local Lighting = game:GetService("Lighting")
@@ -18,7 +17,7 @@ screenGui.Name = "FPSPingGUI"
 
 local fpsLabel = Instance.new("TextLabel", screenGui)
 fpsLabel.Size = UDim2.new(0, 250, 0, 24)
-fpsLabel.Position = UDim2.new(0, 10, 0, 10)
+fpsLabel.Position = UDim2.new(1, -260, 1, -60) -- kanan bawah, agak naik
 fpsLabel.BackgroundTransparency = 1
 fpsLabel.TextColor3 = Color3.fromRGB(0,255,0)
 fpsLabel.TextStrokeTransparency = 0.6
@@ -28,12 +27,10 @@ fpsLabel.TextXAlignment = Enum.TextXAlignment.Left
 
 -- Booster Settings
 pcall(function()
-    -- Matikan shadow & efek berat
     Lighting.GlobalShadows = false
-    Lighting.FogEnd = 100 -- jarak pandang dekat (bisa diubah)
+    Lighting.FogEnd = 100
     Lighting.Brightness = 2
 
-    -- Bersihin textures/particles
     for _, obj in pairs(workspace:GetDescendants()) do
         if obj:IsA("Decal") or obj:IsA("Texture") then
             obj.Transparency = 1
@@ -58,15 +55,8 @@ RunService.RenderStepped:Connect(function()
         local pingVal = Stats.Network.ServerStatsItem["Data Ping"]:GetValue()
         local ping = math.floor(pingVal)
 
-        -- Warna FPS
-        local fpsColor
-        if currentFPS >= 60 then
-            fpsColor = Color3.fromRGB(0,255,0)
-        elseif currentFPS >= 40 then
-            fpsColor = Color3.fromRGB(255,255,0)
-        else
-            fpsColor = Color3.fromRGB(255,0,0)
-        end
+        -- Warna FPS (hijau kalau >=30, merah kalau <30)
+        local fpsColor = currentFPS >= 30 and Color3.fromRGB(0,255,0) or Color3.fromRGB(255,0,0)
 
         -- Warna Ping
         local pingColor
@@ -78,7 +68,7 @@ RunService.RenderStepped:Connect(function()
             pingColor = Color3.fromRGB(255,0,0)
         end
 
-        fpsLabel.Text = string.format("FPS: %d / 120 | Ping: %dms", math.floor(currentFPS), ping)
+        fpsLabel.Text = string.format("FPS: %d | Ping: %dms", math.floor(currentFPS), ping)
         fpsLabel.TextColor3 = fpsColor
         fpsLabel.TextStrokeColor3 = pingColor
     end
