@@ -1,10 +1,9 @@
--- 🔥 Roblox FPS Booster + Display (Universal) 🔥
+-- 🔥 Universal FPS Booster + Display (Bluestacks Optimized)
 
 local RunService = game:GetService("RunService")
 local Stats = game:GetService("Stats")
 local Lighting = game:GetService("Lighting")
 local Players = game:GetService("Players")
-
 local player = Players.LocalPlayer
 
 -- Hapus GUI lama
@@ -12,13 +11,13 @@ if player.PlayerGui:FindFirstChild("FPSPingGUI") then
     player.PlayerGui.FPSPingGUI:Destroy()
 end
 
--- Buat GUI baru
+-- Buat GUI FPS+Ping
 local screenGui = Instance.new("ScreenGui", player.PlayerGui)
 screenGui.Name = "FPSPingGUI"
 
 local fpsLabel = Instance.new("TextLabel", screenGui)
-fpsLabel.Size = UDim2.new(0, 250, 0, 24)
-fpsLabel.Position = UDim2.new(0, 10, 0, 10)
+fpsLabel.Size = UDim2.new(0, 260, 0, 22)
+fpsLabel.Position = UDim2.new(0, 10, 0, 10) -- pojok kiri atas
 fpsLabel.BackgroundTransparency = 1
 fpsLabel.TextColor3 = Color3.fromRGB(0,255,0)
 fpsLabel.TextStrokeTransparency = 0.6
@@ -26,19 +25,40 @@ fpsLabel.TextSize = 18
 fpsLabel.Font = Enum.Font.SourceSansBold
 fpsLabel.TextXAlignment = Enum.TextXAlignment.Left
 
--- Booster Settings
+-- 🔧 Booster Settings
 pcall(function()
-    -- Matikan shadow & efek berat
     Lighting.GlobalShadows = false
-    Lighting.FogEnd = 100 -- jarak pandang dekat (bisa diubah)
-    Lighting.Brightness = 2
+    Lighting.FogEnd = 100
+    Lighting.Brightness = 1
+    for _, effect in ipairs({"Blur", "SunRays", "Atmosphere", "Bloom"}) do
+        local e = Lighting:FindFirstChildOfClass(effect)
+        if e then e:Destroy() end
+    end
 
-    -- Bersihin textures/particles
+    workspace.Terrain.WaterWaveSize = 0
+    workspace.Terrain.WaterWaveSpeed = 0
+    workspace.Terrain.WaterReflectance = 0
+    workspace.Terrain.WaterTransparency = 1
+    workspace.Terrain.Decoration = false
+
     for _, obj in pairs(workspace:GetDescendants()) do
-        if obj:IsA("Decal") or obj:IsA("Texture") then
+        if obj:IsA("BasePart") then
+            obj.Material = Enum.Material.SmoothPlastic
+            obj.Reflectance = 0
+        elseif obj:IsA("Decal") or obj:IsA("Texture") then
             obj.Transparency = 1
-        elseif obj:IsA("ParticleEmitter") or obj:IsA("Trail") then
+        elseif obj:IsA("ParticleEmitter") or obj:IsA("Trail") or obj:IsA("Smoke") then
             obj.Enabled = false
+        elseif obj:IsA("Explosion") then
+            obj.Visible = false
+        elseif obj:IsA("Fire") then
+            obj.Enabled = false
+        end
+    end
+
+    for _, s in pairs(workspace:GetDescendants()) do
+        if s:IsA("Sound") and s.Playing then
+            s.Volume = 0
         end
     end
 end)
@@ -54,18 +74,18 @@ RunService.RenderStepped:Connect(function()
         frames = 0
         lastUpdate = now
 
-        -- Ping
+        -- Ambil Ping
         local pingVal = Stats.Network.ServerStatsItem["Data Ping"]:GetValue()
         local ping = math.floor(pingVal)
 
         -- Warna FPS
         local fpsColor
         if currentFPS >= 60 then
-            fpsColor = Color3.fromRGB(0,255,0)
-        elseif currentFPS >= 40 then
-            fpsColor = Color3.fromRGB(255,255,0)
+            fpsColor = Color3.fromRGB(0,255,0) -- hijau
+        elseif currentFPS >= 30 then
+            fpsColor = Color3.fromRGB(255,255,0) -- kuning
         else
-            fpsColor = Color3.fromRGB(255,0,0)
+            fpsColor = Color3.fromRGB(255,0,0) -- merah
         end
 
         -- Warna Ping
@@ -78,7 +98,8 @@ RunService.RenderStepped:Connect(function()
             pingColor = Color3.fromRGB(255,0,0)
         end
 
-        fpsLabel.Text = string.format("FPS: %d / 120 | Ping: %dms", math.floor(currentFPS), ping)
+        -- Update teks
+        fpsLabel.Text = string.format("FPS: %d | Ping: %dms", math.floor(currentFPS), ping)
         fpsLabel.TextColor3 = fpsColor
         fpsLabel.TextStrokeColor3 = pingColor
     end
