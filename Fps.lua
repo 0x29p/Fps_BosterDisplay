@@ -32,7 +32,7 @@ fpsLabel.TextXAlignment = Enum.TextXAlignment.Left
 pcall(function()
     -- Lighting optimasi
     Lighting.GlobalShadows = false
-    Lighting.FogEnd = 70        -- 👈 bisa diubah: makin kecil makin ringan (default Roblox = 100000)
+    Lighting.FogEnd = 50        -- 👈 bisa diubah: makin kecil makin ringan (default Roblox = 100000)
     Lighting.Brightness = 2     -- 👈 makin kecil makin gelap, makin besar makin terang
     Lighting.EnvironmentSpecularScale = 0
     Lighting.EnvironmentDiffuseScale = 0
