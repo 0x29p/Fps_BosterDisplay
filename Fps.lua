@@ -16,11 +16,12 @@ local screenGui = Instance.new("ScreenGui", player.PlayerGui)
 screenGui.Name = "FPSPingGUI"
 
 local fpsLabel = Instance.new("TextLabel", screenGui)
-fpsLabel.Size = UDim2.new(0, 250, 0, 24)
-fpsLabel.Position = UDim2.new(1, -260, 1, -60) -- kanan bawah, agak naik
+fpsLabel.Size = UDim2.new(0, 300, 0, 24)
+fpsLabel.Position = UDim2.new(1, -310, 1, -60) -- kanan bawah
 fpsLabel.BackgroundTransparency = 1
-fpsLabel.TextColor3 = Color3.fromRGB(0,255,0)
-fpsLabel.TextStrokeTransparency = 0.6
+fpsLabel.TextColor3 = Color3.fromRGB(255,255,255) -- default putih
+fpsLabel.TextStrokeTransparency = 0.2
+fpsLabel.TextStrokeColor3 = Color3.fromRGB(0,0,0) -- outline hitam
 fpsLabel.TextSize = 18
 fpsLabel.Font = Enum.Font.SourceSansBold
 fpsLabel.TextXAlignment = Enum.TextXAlignment.Left
@@ -55,21 +56,17 @@ RunService.RenderStepped:Connect(function()
         local pingVal = Stats.Network.ServerStatsItem["Data Ping"]:GetValue()
         local ping = math.floor(pingVal)
 
-        -- Warna FPS (hijau kalau >=30, merah kalau <30)
+        -- Warna FPS angka
         local fpsColor = currentFPS >= 30 and Color3.fromRGB(0,255,0) or Color3.fromRGB(255,0,0)
+        -- Warna Ping angka
+        local pingColor = ping < 100 and Color3.fromRGB(0,255,0) or Color3.fromRGB(255,0,0)
 
-        -- Warna Ping
-        local pingColor
-        if ping < 100 then
-            pingColor = Color3.fromRGB(0,255,0)
-        elseif ping < 200 then
-            pingColor = Color3.fromRGB(255,255,0)
-        else
-            pingColor = Color3.fromRGB(255,0,0)
-        end
-
-        fpsLabel.Text = string.format("FPS: %d | Ping: %dms", math.floor(currentFPS), ping)
-        fpsLabel.TextColor3 = fpsColor
-        fpsLabel.TextStrokeColor3 = pingColor
+        -- Teks dengan warna berbeda
+        fpsLabel.Text = string.format(
+            "FPS: <font color='rgb(%d,%d,%d)'>%d</font> | Ping: <font color='rgb(%d,%d,%d)'>%dms</font>",
+            fpsColor.R*255, fpsColor.G*255, fpsColor.B*255, math.floor(currentFPS),
+            pingColor.R*255, pingColor.G*255, pingColor.B*255, ping
+        )
+        fpsLabel.RichText = true
     end
 end)
